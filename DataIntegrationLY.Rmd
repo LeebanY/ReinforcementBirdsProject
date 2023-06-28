@@ -1,0 +1,171 @@
+---
+title: "Data integration -- first look LY"
+output: html_notebook
+---
+
+
+```{r}
+library(tidyverse)
+
+#data:
+#Sex roles in birds: Phylogenetic analyses of the influence of climate, life histories and social environment  https://doi.org/10.1111/ele.13938
+
+#Read in both datasets.
+GonzalezVoyer2022 <- read.csv("Gonzalez_Voyer_2022.csv")
+Cooney2017 <- read.csv("Cooneyetal2017EcoLettersDataset2.csv")
+
+# What proportion of Gonzalez Voyer actually has clutch data in it. 
+GonzalezVoyer2022 %>%
+  filter(clutch.size > 0) %>%
+  tally()
+
+#So, 5682 species have any clutch size data at all from Gonzalez Voyer 2022. Lets work with that for now. If each of these had a sister pair with complete data that also existed in the Cooney dataset then we'd have 2841 pairs. 
+
+#How many match both species 1 and species 2 in the cooney dataset. 
+#Species 1
+Cooney2017$ClutchSizeSpecies1 <- GonzalezVoyer2022$clutch.size[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+#also get the refs.
+Cooney2017$ClutchSizeSpecies1Refs <- GonzalezVoyer2022$clutch.size_ref[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+#Species 2
+Cooney2017$ClutchSizeSpecies2 <- GonzalezVoyer2022$clutch.size[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+#refs
+Cooney2017$ClutchSizeSpecies2Refs <- GonzalezVoyer2022$clutch.size_ref[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+# Add in other variables of importance For species 1
+Cooney2017$InvestmentChickBroodingSpecies1 <- GonzalezVoyer2022$chick.brd_2[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+
+Cooney2017$InvestmentChickDefenceSpecies1 <- GonzalezVoyer2022$chick.dfc_2[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+
+Cooney2017$InvestmentChickFeedingSpecies1 <- GonzalezVoyer2022$chick.feed_2[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+
+Cooney2017$EggMassSpecies1 <- GonzalezVoyer2022$egg.mass[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+
+Cooney2017$RelativeIncubationInvestmentSpecies1 <- GonzalezVoyer2022$inc_2[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+
+Cooney2017$IncubationDurationSpecies1 <- GonzalezVoyer2022$inc.dur[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+
+Cooney2017$NestBuildInvestmentSpecies1 <- GonzalezVoyer2022$nest.bld[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+
+Cooney2017$PostFledgFeedingInvestmentSpecies1<- GonzalezVoyer2022$nest.grd_2[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+
+Cooney2017$PostFledgGuardingInvestmentSpecies1<- GonzalezVoyer2022$postf.grd_2[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+
+Cooney2017$ParentalCareScoreSpecies1<- GonzalezVoyer2022$care[ match(Cooney2017$Species.1, GonzalezVoyer2022$species)]
+
+
+# Now for species 2
+
+Cooney2017$InvestmentChickBroodingSpecies2 <- GonzalezVoyer2022$chick.brd_2[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+Cooney2017$InvestmentChickDefenceSpecies2 <- GonzalezVoyer2022$chick.dfc_2[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+
+Cooney2017$InvestmentChickFeedingSpecies2 <- GonzalezVoyer2022$chick.feed_2[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+# -
+
+Cooney2017$EggMassSpecies2 <- GonzalezVoyer2022$egg.mass[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+Cooney2017$RelativeIncubationInvestmentSpecies2 <- GonzalezVoyer2022$inc_2[match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+Cooney2017$IncubationDurationSpecies2 <- GonzalezVoyer2022$inc.dur[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+Cooney2017$NestBuildInvestmentSpecies2 <- GonzalezVoyer2022$nest.bld[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+Cooney2017$PostFledgFeedingInvestmentSpecies2<- GonzalezVoyer2022$nest.grd_2[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+Cooney2017$PostFledgGuardingInvestmentSpecies2<- GonzalezVoyer2022$postf.grd_2[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+Cooney2017$ParentalCareScoreSpecies2<- GonzalezVoyer2022$care[ match(Cooney2017$Species.2, GonzalezVoyer2022$species)]
+
+# Ok now what is the level of completeness in the Cooney 2017 dataset now that we've added those in. 
+
+Cooney2017 %>%
+  filter(ClutchSizeSpecies1 > 0 & ClutchSizeSpecies2 > 0) %>%
+  filter
+  group_by(Tree) %>%
+  tally()
+
+#How many pairs in the Cooney dataset. 
+Cooney2017 %>%
+  group_by(Tree) %>%
+  tally()
+
+#Ok so if we are asking how many species pairs we have with complete clutch data for both species in pair, and to get that for each random sample of tree, we tend to get about 650-700 species pairs for which there is complete data.
+
+Cooney2017 %>% 
+  drop_na(ParentalCareScoreSpecies1, ParentalCareScoreSpecies2) %>%
+  group_by(Tree) %>%
+  tally()
+
+
+
+```
+
+
+
+```{r - Amniote dataset}
+
+#data:
+#An amniote life-history database to perform comparative analyses with birds, mammals, and reptiles https://doi.org/10.1890/15-0846R.1
+
+Myhrvold2015 <- read.csv("ECOL_96_269(1)/Data_Files/Amniote_Database_Aug_2015.csv")
+
+#Filter to just get birds species
+Myhrvold2015<- Myhrvold2015 %>% 
+  filter(class == "Aves")
+
+Myhrvold2015$full_name<-paste(Myhrvold2015$genus, Myhrvold2015$species)
+Myhrvold2015$full_name<-gsub(" ", "_", Myhrvold2015$full_name)
+
+#add clutch size data from myhrvold to cooney dataset.
+Cooney2017$ClutchSizeSpecies1_Myhrvold2015 <- Myhrvold2015$litter_or_clutch_size_n[ match(Cooney2017$Species.1, Myhrvold2015$full_name)]
+
+Cooney2017$ClutchSizeSpecies2_Myhrvold2015 <- Myhrvold2015$litter_or_clutch_size_n[ match(Cooney2017$Species.2, Myhrvold2015$full_name)]
+
+# add clutch per year data.
+Cooney2017$ClutchSizePerYearSpecies1_Myhrvold2015 <- Myhrvold2015$litters_or_clutches_per_y[ match(Cooney2017$Species.1, Myhrvold2015$full_name)]
+
+Cooney2017$ClutchSizePerYearSpecies2_Myhrvold2015 <- Myhrvold2015$litters_or_clutches_per_y[ match(Cooney2017$Species.2, Myhrvold2015$full_name)]
+
+#ask how many pairs we have if we use either the GonzalezVoyer dataset or Myhrvold datasets to get clutch information. 
+CooneyClutchSizeDataset<-Cooney2017 %>%
+  filter(ClutchSizeSpecies1_Myhrvold2015 > 0 & ClutchSizeSpecies2_Myhrvold2015 > 0 | 
+           ClutchSizeSpecies1 > 0 & ClutchSizeSpecies2 > 0) %>%
+  group_by(Tree) %>%
+  select(Species.1,Species.2,Tree,Pair.age..MY.,Dichromatism, Range.overlap,Latitude..absolute.,
+         Migration, Territoriality, Body.mass..log., Passerine...non.passerine, Geographic.region, ClutchSizeSpecies1, ClutchSizeSpecies2, ClutchSizeSpecies1_Myhrvold2015, ClutchSizeSpecies2_Myhrvold2015, )
+
+#ask how many pairs there are that have data for clutch size from one or the other dataset.
+CooneyClutchSizeDataset %>%
+    filter(ClutchSizeSpecies1_Myhrvold2015 > 0 & ClutchSizeSpecies2_Myhrvold2015 > 0 | 
+           ClutchSizeSpecies1 > 0 & ClutchSizeSpecies2 > 0) %>%
+    group_by(Tree) %>%
+    tally()
+
+#how many have complete data from both datasets.
+CooneyClutchSizeDataset %>%
+    filter(ClutchSizeSpecies1_Myhrvold2015 > 0 & ClutchSizeSpecies2_Myhrvold2015 > 0 & 
+           ClutchSizeSpecies1 > 0 & ClutchSizeSpecies2 > 0) %>%
+    group_by(Tree) %>%
+    tally()
+
+#About 800 pairs out of about 1300 possible pairs have data from one or the other. About 550 pairs have full clutch size data from both datasets. 
+
+```
+
+
+Based on the above there are quite a lot of pairs that have the minimum clutch size data for both species in the pair. That's v cool! The question(s) now are whether we want to use the combined dataset from both papers or just one of them, add more data from other papers or just stick with what we have from one or both of these papers and what other variables besides clutch size we need. Chris mentioned that we might want clutch size per year.
+
+```{r Clutch size per year}
+
+Cooney2017 %>%
+  filter(ClutchSizeSpecies1_Myhrvold2015 > 0 & ClutchSizeSpecies2_Myhrvold2015 > 0 & 
+           ClutchSizePerYearSpecies1_Myhrvold2015 > 0 & ClutchSizePerYearSpecies2_Myhrvold2015 > 0) %>%
+  group_by(Tree) %>%
+  tally()
+
+#Only about 170 pairs left after filtering for pairs with clutch size and clutch per year data. 
+
+```
+
